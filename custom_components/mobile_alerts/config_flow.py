@@ -315,25 +315,3 @@ class MobileAlertsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "device_id": self._device_id or "unknown",
             },
         )
-
-    @staticmethod
-    def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
-    ) -> config_entries.OptionsFlow:
-        """Get the options flow for this config entry."""
-        return OptionsFlowHandler(config_entry)
-
-
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle options for Mobile Alerts."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-
-    async def async_step_init(
-        self, user_input: Optional[dict[str, Any]] = None
-    ) -> dict[str, Any]:  # type: ignore[override]
-        """Manage the options."""
-        # For now, no options to manage
-        return self.async_abort(reason="not_implemented")
