@@ -2,6 +2,9 @@
 
 [Back](./README.md)
 
+## v2.2.0 (Mar 06 2026)
+- **feat**: Add support for new device MA10870 AC power status sensor [[#51](https://github.com/CestLaGalere/mobilealerts/issues/51)]
+
 ## v2.1.0 (Dec 15 2025)
 
 - **fix**: Air pressure device MA10238 had wrong humidity key (error) [#40](https://github.com/CestLaGalere/mobilealerts/issues/40)

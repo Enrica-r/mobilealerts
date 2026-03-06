@@ -69,6 +69,11 @@
       "last_seen": {
         "name": "Last Seen"
       }
+    },
+    "binary_sensor": {
+      "ac_power": {
+        "name": "AC Power"
+      }
     }
   }
 }

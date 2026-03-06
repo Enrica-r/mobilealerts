@@ -64,6 +64,12 @@ This document lists all Mobile Alerts devices supported by this Home Assistant i
 | ------- | ----------------------- | ---------------- | ----------------------------- |
 | MA10800 | Wireless Contact Sensor | `w`              | Window/door contact detection |
 
+### Voltage Monitor
+
+| Model   | Name                    | Measurement Keys | Description                                                                       |
+| ------- | ----------------------- | ---------------- | --------------------------------------------------------------------------------- |
+| MA10870 | Wireless Voltage Monitor | `t1`, `t2`      | Temperature and AC mains power presence (t2: 0=AC on, 1=AC off). Ambiguous with MA10101 — model must be selected manually in the config flow. |
+
 ### Wireless Switch
 
 | Model   | Name            | Measurement Keys                                               | Description                                         |
@@ -73,7 +79,7 @@ This document lists all Mobile Alerts devices supported by this Home Assistant i
 ## Measurement Key Reference
 
 - **t1**: Internal/primary temperature sensor (°C)
-- **t2**: External/cable temperature sensor (°C) or water detection flag (MA10350)
+- **t2**: External/cable temperature (°C), water detection flag (MA10350), or AC power status (MA10870: 0=on, 1=off)
 - **h1**: Relative humidity (%)
 - **ap**: Air pressure (hPa)
 - **r**: Rainfall accumulated (mm)
@@ -90,9 +96,7 @@ This document lists all Mobile Alerts devices supported by this Home Assistant i
 
 ## Not Supported
 
-- **MA10870** (Wireless Voltage Monitor) - Measurement keys unknown, not yet supported
-
-If you have such a device, please see chapter "Adding New Devices" and send the log by opening a new issue.
+All known Mobile Alerts devices with documented measurement keys are now supported.
 
 ## Automatic Device Detection
 

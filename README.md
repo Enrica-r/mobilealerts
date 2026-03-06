@@ -8,7 +8,7 @@ integrates home assistant to the mobilealerts sensor reading service
 
 ## Version history
 
-see [Version History](ReleaseHistory.md)
+see [Version History](CHANGELOG.md)
 
 ## Installation
 
@@ -103,6 +103,7 @@ see [https://mobile-alerts.eu/info/public_server_api_documentation.pdf](https://
 | sc      | If the measurement occured because of a status                                                                                                                               |
 | ap      | The measured air pressure in hPa.                                                                                                                                            |
 | water   | water presence sensor (t2 of MA10350)                                                                                                                                        |
+| ac_power   | AC power sensor (t2 of MA10870)                                                                                                                                           |
 
 ## Measuring Rainfall Per Period (Hourly, Daily, Monthly, Yearly)
 

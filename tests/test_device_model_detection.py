@@ -38,9 +38,10 @@ class TestDeviceModelDetection:
         }
         result = find_all_matching_models(measurement)
         assert len(result) > 0
-        model_id, model_info = result[0]
-        # Could match MA10101 - exact match
-        assert model_id == "MA10101"
+        # MA10101 and MA10870 both have {t1, t2} - ambiguous
+        model_ids = [model_id for model_id, _ in result]
+        assert "MA10101" in model_ids
+        assert "MA10870" in model_ids
 
     def test_ma10200_thermo_hygro(self):
         """Test detection of MA10200 - Thermo-Hygrometer."""
@@ -219,8 +220,40 @@ class TestDeviceModelDetection:
         assert model_id == "MA10402"
         assert model_info["measurement_keys"] == {"t1", "t2", "h", "ppm"}
 
+    def test_ma10870_voltage_monitor(self):
+        """Test detection of MA10870 - Wireless Voltage Monitor.
+
+        MA10870 and MA10101 both have {t1, t2}, so they are ambiguous.
+        The user must select the model in the config flow.
+        """
+        measurement = {
+            "t1": 15.9,
+            "t2": 0.0,  # t2=0 means AC is ON
+            "ts": 1772004382,
+            "idx": 5072504,
+            "c": 0,
+            "lb": False,
+        }
+        result = find_all_matching_models(measurement)
+        assert len(result) >= 2, "Should find both MA10101 and MA10870 (ambiguous)"
+        model_ids = [model_id for model_id, _ in result]
+        assert "MA10101" in model_ids
+        assert "MA10870" in model_ids
+
+    def test_ma10870_ac_off(self):
+        """Test detection of MA10870 with AC power off (t2=1)."""
+        measurement = {
+            "t1": 65295,
+            "t2": 1,  # t2=1 means AC is OFF
+            "ts": 1772225691,
+            "idx": 5080487,
+        }
+        result = find_all_matching_models(measurement)
+        assert len(result) >= 2, "Should find both MA10101 and MA10870 (ambiguous)"
+        model_ids = [model_id for model_id, _ in result]
+        assert "MA10870" in model_ids
+
     def test_ma10880_switch(self):
-        """Test detection of MA10880 - Wireless switch."""
         measurement = {
             "kp1t": 1,
             "kp1c": 5,

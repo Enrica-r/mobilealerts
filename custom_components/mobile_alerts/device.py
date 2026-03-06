@@ -13,7 +13,7 @@ _LOGGER: Final = logging.getLogger(__name__)
 # Device model mapping based on mobile-alerts.eu website and API documentation
 # Maps model identifiers to device specifications
 # Measurement keys reference:
-# - t1: Internal temperature, t2: Cable/external temperature
+# - t1: Internal temperature, t2: Cable/external temperature or device-specific override
 # - h: Humidity (standard), h1: Humidity (alternative)
 # - ap: Air pressure
 # - r: Rainfall, rf: Rain flip counter
@@ -122,6 +122,12 @@ DEVICE_MODELS: Final = {
         "measurement_keys": {"w"},
         "description": "Window/door contact detection",
     },
+    "MA10870": {
+        "name": "MA 10870",
+        "display_name": "Wireless Voltage Monitor",
+        "measurement_keys": {"t1", "t2"},  # t2 = AC power status (0=on, 1=off)
+        "description": "Temperature and AC mains power monitoring",
+    },
     "MA10880": {
         "name": "MA 10880",
         "display_name": "Wireless Switch",
@@ -137,7 +143,6 @@ DEVICE_MODELS: Final = {
         },
         "description": "4-channel wireless switch with key press monitoring",
     },
-    # MA10870 (Voltage Monitor) - measurement keys unknown, excluded from detection
 }
 
 
@@ -280,6 +285,7 @@ def get_sensor_type_override(model_id: str, measurement_key: str) -> str | None:
     Some measurement keys have different meanings across models:
     - MA10300: t2 = cable temperature (TemperatureSensor)
     - MA10350: t2 = water level (WaterSensor)
+    - MA10870: t2 = AC mains power status (ACPowerSensor)
 
     This returns the sensor type to use, overriding MEASUREMENT_TYPE_MAP.
 
@@ -293,6 +299,10 @@ def get_sensor_type_override(model_id: str, measurement_key: str) -> str | None:
     # Model-specific overrides: return the sensor type to use
     overrides = {
         ("MA10350", "t2"): "water",  # MA10350: t2 is water level, not temperature
+        (
+            "MA10870",
+            "t2",
+        ): "ac_power",  # MA10870: t2 is AC mains power status, not temperature
     }
 
     override_key = (model_id, measurement_key)

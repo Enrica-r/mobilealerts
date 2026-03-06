@@ -15,6 +15,7 @@ from custom_components.mobile_alerts.sensor import (
     MobileAlertsBatterySensor,
     MobileAlertsLastSeenSensor,
 )
+from custom_components.mobile_alerts.sensor_classes import MobileAlertsACPowerSensor
 from custom_components.mobile_alerts.api import MobileAlertsApi
 from custom_components.mobile_alerts.const import DOMAIN
 
@@ -252,6 +253,34 @@ async def test_last_seen_sensor_extract_reading(
 
 
 @pytest.mark.asyncio
+async def test_last_seen_sensor_fallback_to_ts(
+    mock_coordinator, sample_device, sample_device_info
+):
+    """Test last seen sensor falls back to 'ts' when 'c' is absent (e.g. MA10870)."""
+    test_timestamp = 1772833234
+    mock_coordinator.get_reading.return_value = {
+        "deviceid": "173A4E25385D",
+        "measurement": {
+            "ts": test_timestamp,
+            "t1": 17.5,
+            "t2": 0.0,
+            # No 'c' field - MA10870 behaviour
+        },
+    }
+
+    sensor = MobileAlertsLastSeenSensor(
+        mock_coordinator, sample_device, sample_device_info
+    )
+    sensor.extract_reading()
+
+    assert isinstance(sensor._attr_native_value, datetime)
+    assert sensor._attr_native_value == datetime.fromtimestamp(
+        test_timestamp, tz=timezone.utc
+    )
+    assert sensor._attr_available
+
+
+@pytest.mark.asyncio
 async def test_sensor_no_data(mock_coordinator, sample_device, sample_device_info):
     """Test sensor behavior when no data is available."""
     mock_coordinator.get_reading.return_value = None
@@ -357,3 +386,83 @@ async def test_humidity_sensor_value_validation(sample_device_info):
 
     sensor._attr_native_value = -10  # Too low
     assert sensor.native_value is None
+
+
+@pytest.mark.asyncio
+async def test_ac_power_sensor_initialization(mock_coordinator, sample_device_info):
+    """Test AC power sensor (MA10870) initialization."""
+    device = {
+        CONF_DEVICE_ID: "173A4E25ABCD",
+        CONF_NAME: "Voltage Monitor",
+        CONF_TYPE: "ac_power",
+    }
+
+    from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+
+    sensor = MobileAlertsACPowerSensor(mock_coordinator, device, sample_device_info)
+
+    assert sensor._device_id == "173A4E25ABCD"
+    assert sensor._attr_name == "Voltage Monitor AC Power"
+    assert sensor._type == "ac_power"
+    assert sensor._attr_device_class == BinarySensorDeviceClass.POWER
+    assert sensor._attr_unique_id == "173A4E25ABCDac_power"
+
+
+@pytest.mark.asyncio
+async def test_ac_power_sensor_ac_on(sample_device_info):
+    """Test AC power sensor when AC is ON (t2=0)."""
+    mock_coordinator = MagicMock()
+    mock_coordinator.get_reading.return_value = {
+        "deviceid": "173A4E25ABCD",
+        "measurement": {"t1": 15.9, "t2": 0.0, "ts": 1772004382},
+    }
+
+    device = {
+        CONF_DEVICE_ID: "173A4E25ABCD",
+        CONF_NAME: "Voltage Monitor",
+        CONF_TYPE: "ac_power",
+    }
+    sensor = MobileAlertsACPowerSensor(mock_coordinator, device, sample_device_info)
+    sensor.extract_reading()
+
+    assert sensor._attr_is_on is True  # t2=0 → AC is ON (power present)
+    assert sensor._attr_available
+
+
+@pytest.mark.asyncio
+async def test_ac_power_sensor_ac_off(sample_device_info):
+    """Test AC power sensor when AC is OFF (t2=1)."""
+    mock_coordinator = MagicMock()
+    mock_coordinator.get_reading.return_value = {
+        "deviceid": "173A4E25ABCD",
+        "measurement": {"t1": 65295, "t2": 1, "ts": 1772225691},
+    }
+
+    device = {
+        CONF_DEVICE_ID: "173A4E25ABCD",
+        CONF_NAME: "Voltage Monitor",
+        CONF_TYPE: "ac_power",
+    }
+    sensor = MobileAlertsACPowerSensor(mock_coordinator, device, sample_device_info)
+    sensor.extract_reading()
+
+    assert sensor._attr_is_on is False  # t2=1 → AC is OFF (power absent)
+    assert sensor._attr_available
+
+
+@pytest.mark.asyncio
+async def test_ac_power_sensor_no_data(sample_device_info):
+    """Test AC power sensor behavior when no data available."""
+    mock_coordinator = MagicMock()
+    mock_coordinator.get_reading.return_value = None
+
+    device = {
+        CONF_DEVICE_ID: "173A4E25ABCD",
+        CONF_NAME: "Voltage Monitor",
+        CONF_TYPE: "ac_power",
+    }
+    sensor = MobileAlertsACPowerSensor(mock_coordinator, device, sample_device_info)
+    sensor.extract_reading()
+
+    assert sensor._attr_is_on is False
+    assert not sensor._attr_available
