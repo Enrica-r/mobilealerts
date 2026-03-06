@@ -141,6 +141,7 @@ DEVICE_MODELS: Final = {
     "MA10870": {
         "name": "MA 10870",
         "display_name": "Wireless Voltage Monitor",
+        "manufacturer": "Mobile Alerts",
         "measurement_keys": {"t1", "t2"},  # t2 = AC power status (0=on, 1=off)
         "description": "Temperature and AC mains power monitoring",
     },

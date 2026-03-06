@@ -108,7 +108,7 @@ TFA Dostmann manufactures devices that use the same Mobile Alerts API and sensor
 
 ## Not Supported
 
-All known Mobile Alerts devices with documented measurement keys are now supported.
+All devices listed above are currently supported by this integration.
 
 ## Automatic Device Detection
 

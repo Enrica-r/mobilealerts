@@ -33,11 +33,35 @@
       "temperature": {
         "name": "温度"
       },
+      "temperature_t1": {
+        "name": "温度 T1"
+      },
+      "temperature_t2": {
+        "name": "温度 T2"
+      },
+      "temperature_t3": {
+        "name": "温度 T3"
+      },
+      "temperature_t4": {
+        "name": "温度 T4"
+      },
       "cable_temperature": {
         "name": "电缆温度"
       },
       "humidity": {
         "name": "湿度"
+      },
+      "humidity_1": {
+        "name": "湿度 1"
+      },
+      "humidity_2": {
+        "name": "湿度 2"
+      },
+      "humidity_3": {
+        "name": "湿度 3"
+      },
+      "humidity_4": {
+        "name": "湿度 4"
       },
       "external_humidity": {
         "name": "外部湿度"
@@ -74,11 +98,41 @@
       },
       "last_seen": {
         "name": "最后看到"
+      },
+      "kp1_type": {
+        "name": "按键 1 类型"
+      },
+      "kp1_count": {
+        "name": "按键 1 计数"
+      },
+      "kp2_type": {
+        "name": "按键 2 类型"
+      },
+      "kp2_count": {
+        "name": "按键 2 计数"
+      },
+      "kp3_type": {
+        "name": "按键 3 类型"
+      },
+      "kp3_count": {
+        "name": "按键 3 计数"
+      },
+      "kp4_type": {
+        "name": "按键 4 类型"
+      },
+      "kp4_count": {
+        "name": "按键 4 计数"
       }
     },
     "binary_sensor": {
       "ac_power": {
         "name": "交流电源"
+      },
+      "water": {
+        "name": "检测到水"
+      },
+      "contact": {
+        "name": "窗户接触"
       }
     }
   }

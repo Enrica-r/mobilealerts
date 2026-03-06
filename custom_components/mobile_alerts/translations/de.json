@@ -33,11 +33,35 @@
       "temperature": {
         "name": "Temperatur"
       },
+      "temperature_t1": {
+        "name": "Temperatur T1"
+      },
+      "temperature_t2": {
+        "name": "Temperatur T2"
+      },
+      "temperature_t3": {
+        "name": "Temperatur T3"
+      },
+      "temperature_t4": {
+        "name": "Temperatur T4"
+      },
       "cable_temperature": {
         "name": "Kabeltemperatur"
       },
       "humidity": {
         "name": "Luftfeuchte"
+      },
+      "humidity_1": {
+        "name": "Luftfeuchte 1"
+      },
+      "humidity_2": {
+        "name": "Luftfeuchte 2"
+      },
+      "humidity_3": {
+        "name": "Luftfeuchte 3"
+      },
+      "humidity_4": {
+        "name": "Luftfeuchte 4"
       },
       "external_humidity": {
         "name": "Externe Luftfeuchte"
@@ -74,11 +98,41 @@
       },
       "last_seen": {
         "name": "Zuletzt gesehen"
+      },
+      "kp1_type": {
+        "name": "Taste 1 Typ"
+      },
+      "kp1_count": {
+        "name": "Taste 1 Zähler"
+      },
+      "kp2_type": {
+        "name": "Taste 2 Typ"
+      },
+      "kp2_count": {
+        "name": "Taste 2 Zähler"
+      },
+      "kp3_type": {
+        "name": "Taste 3 Typ"
+      },
+      "kp3_count": {
+        "name": "Taste 3 Zähler"
+      },
+      "kp4_type": {
+        "name": "Taste 4 Typ"
+      },
+      "kp4_count": {
+        "name": "Taste 4 Zähler"
       }
     },
     "binary_sensor": {
       "ac_power": {
         "name": "Netzspannung"
+      },
+      "water": {
+        "name": "Wasser erkannt"
+      },
+      "contact": {
+        "name": "Fensterkontakt"
       }
     }
   }

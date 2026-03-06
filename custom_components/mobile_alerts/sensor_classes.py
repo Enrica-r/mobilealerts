@@ -67,10 +67,44 @@ class MobileAlertsSensor(CoordinatorEntity, SensorEntity):
         self._id = self._device_id + self._type
         self._attr_unique_id = self._id
 
-        # Set display name based on sensor type
-        # This makes entity IDs more descriptive like "sensor.test1_temperature_t1"
-        # Must stay in sync with MEASUREMENT_TYPE_MAP in sensor.py
-        type_labels = {
+        # Enable entity name translation: HA prepends device name automatically when
+        # _attr_has_entity_name=True. _attr_translation_key maps to entity.sensor.{key}.name
+        # in the translation files. _attr_name is the English fallback.
+        # Must stay in sync with strings.json entity.sensor.* and MEASUREMENT_TYPE_MAP in sensor.py.
+        self._attr_has_entity_name = True
+
+        _type_translation_keys = {
+            "t1": "temperature_t1",
+            "t2": "temperature_t2",
+            "t3": "temperature_t3",
+            "t4": "temperature_t4",
+            "h": "humidity",
+            "h1": "humidity_1",
+            "h2": "humidity_2",
+            "h3": "humidity_3",
+            "h4": "humidity_4",
+            "r": "rain",
+            "rf": "rain_flips",
+            "ws": "wind_speed",
+            "wg": "wind_gust",
+            "wd": "wind_direction",
+            "wd_degrees": "wind_direction_degrees",
+            "ap": "pressure",
+            "ppm": "air_quality",
+            "w": "window",
+            "battery": "battery",
+            "last_seen": "last_seen",
+            # Key press sensors (MA 10880 Wireless Switch)
+            "kp1t": "kp1_type",
+            "kp1c": "kp1_count",
+            "kp2t": "kp2_type",
+            "kp2c": "kp2_count",
+            "kp3t": "kp3_type",
+            "kp3c": "kp3_count",
+            "kp4t": "kp4_type",
+            "kp4c": "kp4_count",
+        }
+        _type_fallback_names = {
             "t1": "Temperature T1",
             "t2": "Temperature T2",
             "t3": "Temperature T3",
@@ -81,18 +115,16 @@ class MobileAlertsSensor(CoordinatorEntity, SensorEntity):
             "h3": "Humidity 3",
             "h4": "Humidity 4",
             "r": "Rain",
-            "rf": "Rain Flow",
+            "rf": "Rain Counter",
             "ws": "Wind Speed",
             "wg": "Wind Gust",
             "wd": "Wind Direction",
-            "wd_degrees": "Wind Direction Degrees",
+            "wd_degrees": "Wind Direction (Degrees)",
             "ap": "Air Pressure",
             "ppm": "Air Quality",
             "w": "Window Contact",
-            "water": "Water Detected",
             "battery": "Battery",
             "last_seen": "Last Seen",
-            "ac_power": "AC Power",
             # Key press sensors (MA 10880 Wireless Switch)
             "kp1t": "Key Press 1 Type",
             "kp1c": "Key Press 1 Counter",
@@ -104,14 +136,23 @@ class MobileAlertsSensor(CoordinatorEntity, SensorEntity):
             "kp4c": "Key Press 4 Counter",
         }
 
-        type_label = type_labels.get(self._type, self._type.upper())
-        self._attr_name = f"{self._device_name} {type_label}"
+        self._attr_translation_key = _type_translation_keys.get(self._type)
+        # IMPORTANT: _attr_name must NOT be set when translation_key is defined.
+        # If _attr_name is set to any string, HA uses it directly and ignores
+        # translation_key entirely. Only set _attr_name for unknown types without
+        # a translation key, as a last-resort fallback.
+        if self._attr_translation_key is None:
+            self._attr_name = self._type.upper()
 
         self.extract_reading()
         self._attr_attribution = ATTRIBUTION
 
         _LOGGER.debug(
-            "MobileAlertsSensor::init ID %s, name=%s", self._id, self._attr_name
+            "MobileAlertsSensor::init ID=%s translation_key=%s has_entity_name=%s name=%s",
+            self._id,
+            self._attr_translation_key,
+            self._attr_has_entity_name,
+            getattr(self, "_attr_name", "<UNDEFINED>"),
         )
 
     @callback
@@ -157,7 +198,7 @@ class MobileAlertsSensor(CoordinatorEntity, SensorEntity):
 
         _LOGGER.debug(
             "MobileAlertsSensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_native_value,
             self._attr_available,
         )
@@ -466,7 +507,7 @@ class MobileAlertsWindDirectionDegreesSensor(MobileAlertsSensor):
 
         _LOGGER.debug(
             "MobileAlertsWindDirectionDegreesSensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_native_value,
             self._attr_available,
         )
@@ -612,7 +653,7 @@ class MobileAlertsBatterySensor(MobileAlertsSensor):
 
         _LOGGER.debug(
             "MobileAlertsBatterySensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_native_value,
             self._attr_available,
         )
@@ -660,7 +701,10 @@ class MobileAlertsLastSeenSensor(MobileAlertsSensor):
 
         # Prefer 'c' (time received by gateway) over 'ts' (measurement timestamp).
         # Some devices (e.g. MA10870) do not send 'c', so fall back to 'ts'.
-        timestamp_value = measurement_data.get("c") or measurement_data.get("ts")
+        if "c" in measurement_data:
+            timestamp_value = measurement_data.get("c")
+        else:
+            timestamp_value = measurement_data.get("ts")
         if timestamp_value is not None:
             try:
                 # Convert timestamp to datetime object with timezone
@@ -698,7 +742,7 @@ class MobileAlertsLastSeenSensor(MobileAlertsSensor):
 
         _LOGGER.debug(
             "MobileAlertsLastSeenSensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_native_value,
             self._attr_available,
         )
@@ -734,19 +778,18 @@ class MobileAlertsWaterSensor(CoordinatorEntity, BinarySensorEntity):
         self._id = self._device_id + self._type
         self._attr_unique_id = self._id
 
-        # Set display name based on sensor type
-        # Water sensor is only used with "water" type (MA10350 override for t2)
-        type_label = "Water Detected"
-        self._attr_name = f"{self._device_name} {type_label}"
+        self._attr_has_entity_name = True
+        self._attr_translation_key = "water"
+        # Do NOT set _attr_name — leaving it UNDEFINED lets HA use translation_key
 
         self.extract_reading()
         self._attr_attribution = ATTRIBUTION
 
         _LOGGER.debug(
-            "MobileAlertsWaterSensor::init ID %s, type=%s, name=%s",
+            "MobileAlertsWaterSensor::init ID=%s translation_key=%s has_entity_name=%s",
             self._id,
-            self._type,
-            self._attr_name,
+            self._attr_translation_key,
+            self._attr_has_entity_name,
         )
 
     @callback
@@ -799,7 +842,7 @@ class MobileAlertsWaterSensor(CoordinatorEntity, BinarySensorEntity):
             except (ValueError, TypeError):
                 _LOGGER.warning(
                     "Invalid water/contact sensor value for %s: %s (type: %s)",
-                    self._attr_name,
+                    getattr(self, "_attr_name", self._id),
                     state,
                     type(state).__name__,
                 )
@@ -811,7 +854,7 @@ class MobileAlertsWaterSensor(CoordinatorEntity, BinarySensorEntity):
 
         _LOGGER.debug(
             "MobileAlertsWaterSensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_is_on,
             self._attr_available,
         )
@@ -845,17 +888,18 @@ class MobileAlertsACPowerSensor(CoordinatorEntity, BinarySensorEntity):
         self._id = self._device_id + self._type
         self._attr_unique_id = self._id
 
-        type_label = "AC Power"
-        self._attr_name = f"{self._device_name} {type_label}"
+        self._attr_has_entity_name = True
+        self._attr_translation_key = "ac_power"
+        # Do NOT set _attr_name — leaving it UNDEFINED lets HA use translation_key
 
         self.extract_reading()
         self._attr_attribution = ATTRIBUTION
 
         _LOGGER.debug(
-            "MobileAlertsACPowerSensor::init ID %s, type=%s, name=%s",
+            "MobileAlertsACPowerSensor::init ID=%s translation_key=%s has_entity_name=%s",
             self._id,
-            self._type,
-            self._attr_name,
+            self._attr_translation_key,
+            self._attr_has_entity_name,
         )
 
     @callback
@@ -899,7 +943,7 @@ class MobileAlertsACPowerSensor(CoordinatorEntity, BinarySensorEntity):
             except (ValueError, TypeError):
                 _LOGGER.warning(
                     "Invalid AC power sensor value for %s: %s (type: %s)",
-                    self._attr_name,
+                    getattr(self, "_attr_name", self._id),
                     state,
                     type(state).__name__,
                 )
@@ -911,7 +955,7 @@ class MobileAlertsACPowerSensor(CoordinatorEntity, BinarySensorEntity):
 
         _LOGGER.debug(
             "MobileAlertsACPowerSensor::extract_reading %s is_on=%s available=%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_is_on,
             self._attr_available,
         )
@@ -940,7 +984,9 @@ class MobileAlertsContactSensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_device_class = BinarySensorDeviceClass.OPENING
         self._device_id = device[CONF_DEVICE_ID]
         self._device_name = device[CONF_NAME]
-        self._attr_name = self._device_name
+        self._attr_has_entity_name = True
+        self._attr_translation_key = "contact"
+        # Do NOT set _attr_name — leaving it UNDEFINED lets HA use translation_key
         self._attr_device_info = device_info
         self._id = self._device_id + self._type
         self._attr_unique_id = self._id
@@ -998,7 +1044,7 @@ class MobileAlertsContactSensor(CoordinatorEntity, BinarySensorEntity):
             except (ValueError, TypeError):
                 _LOGGER.warning(
                     "Invalid contact sensor value for %s: %s (type: %s)",
-                    self._attr_name,
+                    getattr(self, "_attr_name", self._id),
                     state,
                     type(state).__name__,
                 )
@@ -1010,7 +1056,7 @@ class MobileAlertsContactSensor(CoordinatorEntity, BinarySensorEntity):
 
         _LOGGER.debug(
             "MobileAlertsContactSensor::extract_reading %s %s:%s",
-            self._attr_name,
+            getattr(self, "_attr_name", self._id),
             self._attr_is_on,
             self._attr_available,
         )

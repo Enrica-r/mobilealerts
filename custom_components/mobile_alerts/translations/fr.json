@@ -33,11 +33,35 @@
       "temperature": {
         "name": "Température"
       },
+      "temperature_t1": {
+        "name": "Température T1"
+      },
+      "temperature_t2": {
+        "name": "Température T2"
+      },
+      "temperature_t3": {
+        "name": "Température T3"
+      },
+      "temperature_t4": {
+        "name": "Température T4"
+      },
       "cable_temperature": {
         "name": "Température du câble"
       },
       "humidity": {
         "name": "Humidité"
+      },
+      "humidity_1": {
+        "name": "Humidité 1"
+      },
+      "humidity_2": {
+        "name": "Humidité 2"
+      },
+      "humidity_3": {
+        "name": "Humidité 3"
+      },
+      "humidity_4": {
+        "name": "Humidité 4"
       },
       "external_humidity": {
         "name": "Humidité externe"
@@ -74,11 +98,41 @@
       },
       "last_seen": {
         "name": "Vu pour la dernière fois"
+      },
+      "kp1_type": {
+        "name": "Type de touche 1"
+      },
+      "kp1_count": {
+        "name": "Compteur de touche 1"
+      },
+      "kp2_type": {
+        "name": "Type de touche 2"
+      },
+      "kp2_count": {
+        "name": "Compteur de touche 2"
+      },
+      "kp3_type": {
+        "name": "Type de touche 3"
+      },
+      "kp3_count": {
+        "name": "Compteur de touche 3"
+      },
+      "kp4_type": {
+        "name": "Type de touche 4"
+      },
+      "kp4_count": {
+        "name": "Compteur de touche 4"
       }
     },
     "binary_sensor": {
       "ac_power": {
         "name": "Courant secteur"
+      },
+      "water": {
+        "name": "Eau détectée"
+      },
+      "contact": {
+        "name": "Contact de fenêtre"
       }
     }
   }

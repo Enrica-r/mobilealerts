@@ -33,11 +33,35 @@
       "temperature": {
         "name": "Temperatura"
       },
+      "temperature_t1": {
+        "name": "Temperatura T1"
+      },
+      "temperature_t2": {
+        "name": "Temperatura T2"
+      },
+      "temperature_t3": {
+        "name": "Temperatura T3"
+      },
+      "temperature_t4": {
+        "name": "Temperatura T4"
+      },
       "cable_temperature": {
         "name": "Temperatura del cable"
       },
       "humidity": {
         "name": "Humedad"
+      },
+      "humidity_1": {
+        "name": "Humedad 1"
+      },
+      "humidity_2": {
+        "name": "Humedad 2"
+      },
+      "humidity_3": {
+        "name": "Humedad 3"
+      },
+      "humidity_4": {
+        "name": "Humedad 4"
       },
       "external_humidity": {
         "name": "Humedad externa"
@@ -74,11 +98,41 @@
       },
       "last_seen": {
         "name": "Último visto"
+      },
+      "kp1_type": {
+        "name": "Tipo de pulsación 1"
+      },
+      "kp1_count": {
+        "name": "Contador de pulsación 1"
+      },
+      "kp2_type": {
+        "name": "Tipo de pulsación 2"
+      },
+      "kp2_count": {
+        "name": "Contador de pulsación 2"
+      },
+      "kp3_type": {
+        "name": "Tipo de pulsación 3"
+      },
+      "kp3_count": {
+        "name": "Contador de pulsación 3"
+      },
+      "kp4_type": {
+        "name": "Tipo de pulsación 4"
+      },
+      "kp4_count": {
+        "name": "Contador de pulsación 4"
       }
     },
     "binary_sensor": {
       "ac_power": {
         "name": "Corriente alterna"
+      },
+      "water": {
+        "name": "Agua detectada"
+      },
+      "contact": {
+        "name": "Contacto de ventana"
       }
     }
   }

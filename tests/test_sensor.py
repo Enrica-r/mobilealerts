@@ -56,7 +56,11 @@ async def test_temperature_sensor_initialization(
     )
 
     assert sensor._device_id == "A1B2C3D4E5F6"
-    assert sensor._attr_name == "Test Device Temperature T1"
+    assert (
+        not hasattr(sensor, "_attr_name") or sensor._attr_name is None
+    )  # UNDEFINED when translation_key is set
+    assert sensor._attr_has_entity_name is True
+    assert sensor._attr_translation_key == "temperature_t1"
     assert sensor._type == "t1"
     assert sensor._device_class == SensorDeviceClass.TEMPERATURE
     assert sensor._attr_unique_id == "A1B2C3D4E5F6t1"
@@ -76,7 +80,9 @@ async def test_humidity_sensor_initialization(
     )
 
     assert sensor._device_id == "A1B2C3D4E5F6"
-    assert sensor._attr_name == "Test Device Humidity"
+    assert not hasattr(sensor, "_attr_name") or sensor._attr_name is None
+    assert sensor._attr_has_entity_name is True
+    assert sensor._attr_translation_key == "humidity"
     assert sensor._type == "h"
     assert sensor._device_class == SensorDeviceClass.HUMIDITY
     assert sensor._attr_native_unit_of_measurement == PERCENTAGE
@@ -92,7 +98,9 @@ async def test_battery_sensor_initialization(
     )
 
     assert sensor._device_id == "A1B2C3D4E5F6"
-    assert sensor._attr_name == "Test Device Battery"
+    assert not hasattr(sensor, "_attr_name") or sensor._attr_name is None
+    assert sensor._attr_has_entity_name is True
+    assert sensor._attr_translation_key == "battery"
     assert sensor._type == "battery"
     assert sensor._device_class is None  # Generic sensor for string values
     assert sensor._attr_native_unit_of_measurement is None  # String-based, no unit
@@ -109,7 +117,9 @@ async def test_last_seen_sensor_initialization(
     )
 
     assert sensor._device_id == "A1B2C3D4E5F6"
-    assert sensor._attr_name == "Test Device Last Seen"
+    assert not hasattr(sensor, "_attr_name") or sensor._attr_name is None
+    assert sensor._attr_has_entity_name is True
+    assert sensor._attr_translation_key == "last_seen"
     assert sensor._type == "last_seen"
     assert sensor._device_class == SensorDeviceClass.TIMESTAMP
     assert sensor._attr_unique_id == "A1B2C3D4E5F6_last_seen"
@@ -402,7 +412,9 @@ async def test_ac_power_sensor_initialization(mock_coordinator, sample_device_in
     sensor = MobileAlertsACPowerSensor(mock_coordinator, device, sample_device_info)
 
     assert sensor._device_id == "173A4E25ABCD"
-    assert sensor._attr_name == "Voltage Monitor AC Power"
+    assert not hasattr(sensor, "_attr_name") or sensor._attr_name is None
+    assert sensor._attr_has_entity_name is True
+    assert sensor._attr_translation_key == "ac_power"
     assert sensor._type == "ac_power"
     assert sensor._attr_device_class == BinarySensorDeviceClass.POWER
     assert sensor._attr_unique_id == "173A4E25ABCDac_power"
