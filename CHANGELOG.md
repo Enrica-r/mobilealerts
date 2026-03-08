@@ -2,6 +2,10 @@
 
 [Back](./README.md)
 
+## v2.3.0 (Mar 06 2026)
+- **feat**: Add support for new device MA10870 AC power status sensor [[#51](https://github.com/CestLaGalere/mobilealerts/issues/51)]
+- **fix**: Translation of labels did not work because of wrong key handling in sensor classes.
+
 ## v.2.2.0 (Dec 26 2025)
 
 - **feat**: Add device TFA Dostmann KLIMA@HOME 30.3060 (based on Mobile Alerts), issue [44](https://github.com/CestLaGalere/mobilealerts/issues/44)

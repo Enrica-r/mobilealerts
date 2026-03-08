@@ -32,11 +32,35 @@
       "temperature": {
         "name": "Temperature"
       },
+      "temperature_t1": {
+        "name": "Temperature T1"
+      },
+      "temperature_t2": {
+        "name": "Temperature T2"
+      },
+      "temperature_t3": {
+        "name": "Temperature T3"
+      },
+      "temperature_t4": {
+        "name": "Temperature T4"
+      },
       "cable_temperature": {
         "name": "Cable Temperature"
       },
       "humidity": {
         "name": "Humidity"
+      },
+      "humidity_1": {
+        "name": "Humidity 1"
+      },
+      "humidity_2": {
+        "name": "Humidity 2"
+      },
+      "humidity_3": {
+        "name": "Humidity 3"
+      },
+      "humidity_4": {
+        "name": "Humidity 4"
       },
       "external_humidity": {
         "name": "External Humidity"
@@ -73,6 +97,41 @@
       },
       "last_seen": {
         "name": "Last Seen"
+      },
+      "kp1_type": {
+        "name": "Key Press 1 Type"
+      },
+      "kp1_count": {
+        "name": "Key Press 1 Counter"
+      },
+      "kp2_type": {
+        "name": "Key Press 2 Type"
+      },
+      "kp2_count": {
+        "name": "Key Press 2 Counter"
+      },
+      "kp3_type": {
+        "name": "Key Press 3 Type"
+      },
+      "kp3_count": {
+        "name": "Key Press 3 Counter"
+      },
+      "kp4_type": {
+        "name": "Key Press 4 Type"
+      },
+      "kp4_count": {
+        "name": "Key Press 4 Counter"
+      }
+    },
+    "binary_sensor": {
+      "ac_power": {
+        "name": "AC Power"
+      },
+      "water": {
+        "name": "Water Detected"
+      },
+      "contact": {
+        "name": "Window Contact"
       }
     }
   }
